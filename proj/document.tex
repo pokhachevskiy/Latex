@@ -1,0 +1,1782 @@
+\documentclass[a4paper,12pt]{report}
+
+%%% Работа с русским языком
+\usepackage{cmap}					% поиск в PDF
+\usepackage{mathtext} 				% русские буквы в фомулах
+\usepackage[T2A]{fontenc}			% кодировка
+\usepackage[utf8]{inputenc}			% кодировка исходного текста
+\usepackage[english,russian]{babel}	% локализация и переносы
+
+%%% Дополнительная работа с математикой
+\usepackage{amsfonts,amssymb,amsthm,mathtools} % AMS
+\usepackage{amsmath}
+\usepackage{icomma} % "Умная" запятая: $0,2$ --- число, $0, 2$ --- перечисление
+\usepackage{ dsfont }
+%% Номера формул
+%\mathtoolsset{showonlyrefs=true} % Показывать номера только у тех формул, на которые есть \eqref{} в тексте.
+
+%% Шрифты
+\usepackage{euscript}	 % Шрифт Евклид
+\usepackage{mathrsfs} % Красивый матшрифт
+
+%% Свои команды
+\DeclareMathOperator{\sgn}{\mathop{sgn}}
+
+%% Перенос знаков в формулах (по Львовскому)
+\newcommand*{\hm}[1]{#1\nobreak\discretionary{}
+{\hbox{$\mathsurround=0pt #1$}}{}}
+
+%%% Работа с картинками
+\usepackage{graphicx}  % Для вставки рисунков
+\graphicspath{{images/}{images2/}}  % папки с картинками
+\setlength\fboxsep{3pt} % Отступ рамки \fbox{} от рисунка
+\setlength\fboxrule{1pt} % Толщина линий рамки \fbox{}
+\usepackage{wrapfig} % Обтекание рисунков и таблиц текстом
+
+%%% Работа с таблицами
+\usepackage{array,tabularx,tabulary,booktabs} % Дополнительная работа с таблицами
+\usepackage{longtable}  % Длинные таблицы
+\usepackage{multirow} % Слияние строк в таблице
+
+%%% Заголовок
+\author{Похачевский Даниил Андреевич}
+\title{2.1 Рисунки и таблицы}
+\date{\today}
+\title{Линейная алгебра. Второе задание}
+
+\renewcommand*\thesubsection{\arabic{subsection}.}
+\renewcommand*\thesection{\Roman{section}.}
+ \begin{document}                    % Конец преамбулы, начало текста.
+	
+%	\maketitle % вывести заголовок, автора
+%	\thispagestyle{empty} % не нумеровать первую стран
+%	\begin{abstract} % начало аннотации
+%		Это наглядное пособие ...
+%	\end{abstract} % конец аннотации
+% Титульный лист (ГОСТ Р 7.0.11-2001, 5.1)
+\thispagestyle{empty}%
+\begin{center}%
+	\MakeUppercase{министерство образования и науки российской федерации московский физико-технический институт (государственный университет)}
+\end{center}%
+%
+\vspace{0pt plus4fill} %число перед fill = кратность относительно некоторого расстояния fill, кусками которого заполнены пустые места
+\begin{flushright}%
+	На правах рукописи
+\end{flushright}%
+%
+\vspace{0pt plus6fill} %число перед fill = кратность относительно некоторого расстояния fill, кусками которого заполнены пустые места
+\begin{center}%
+	{\large Похачевский Даниил Андреевич}
+\end{center}%
+%
+\vspace{0pt plus1fill} %число перед fill = кратность относительно некоторого расстояния fill, кусками которого заполнены пустые места
+\begin{center}%
+	\textbf {\large ВТОРОЕ ЗАДАНИЕ ПО ЛИНЕЙНОЙ АЛГЕБРЕ \\(2 СЕМЕСТР)}
+	
+	\vspace{0pt plus2fill} %число перед fill = кратность относительно некоторого расстояния fill, кусками которого заполнены пустые места
+	{%\small
+		Специальность 10.05.01~---
+		
+		<<Компьютерная безопасность [б]>>
+	}
+	
+	\vspace{0pt plus2fill} %число перед fill = кратность относительно некоторого расстояния fill, кусками которого заполнены пустые места
+	Собственные решения задач из задания
+	
+\end{center}%
+%
+\vspace{0pt plus4fill} %число перед fill = кратность относительно некоторого расстояния fill, кусками которого заполнены пустые места
+
+%
+\vspace{0pt plus4fill} %число перед fill = кратность относительно некоторого расстояния fill, кусками которого заполнены пустые места
+\begin{center}%
+	{Иваново~--- 2016}
+\end{center}%
+	\newpage
+	
+	\tableofcontents % сгенерировать оглавление
+	\thispagestyle{empty}
+	\newpage
+	\begin{abstract} % начало аннотации
+		Это моё второе задание по линейной алгебре. Летом, когда делать было совсем нечего - решил его затехать. Все равно (рано или поздно... лучше раньше)  пришлось бы нарабатывать опыт в \LaTeX. Не знаю, хорошо ли получилось - первокурсники, думаю, оценят. Если кому-нибудь будет интересно, сколько это заняло времени, или кто-то захочет исправить опечатки - пишите письма (мелким почерком) на daniek9898@gmail.com. Желаю успехов в изучении линейной алгебры!
+	\end{abstract} % конец аннотации
+	\newpage
+	\section{Структура линейного преобразования}
+	\subsection{Собственные векторы, собственные значения, диагонализируемость}
+$$24.13$$
+	$det(A - \lambda E)=0	\Longleftrightarrow (\lambda_1 - \lambda)(\lambda_2 - \lambda) \dots (\lambda_{2k+1} - \lambda) = 0$ - 
+	\\ многочлен нечетной степени с действительными коэффициентами $\Rightarrow$
+	\\$\exists n = \overline{1,{2k+1}} : \lambda_n \in \mathds{R} \Rightarrow \exists$ 
+	хотя бы один собственный вектор
+
+$$24.14(1,2)$$
+$\chi_\varphi(\lambda)$ - не зависит от выбора базиса.
+\\$\vartriangleright$
+\\$\varphi \underset{e, e}\longmapsto A$ \qquad $|A - \lambda E| =^{?} |A^{'} - \lambda E|$
+\\$ \varphi \underset{e^{'}, e^{'}}\longmapsto A^{'}$  \qquad $A^{'} = S^{-1} A S$
+\\ $\underline{|A^{'} - \lambda E|} = |S^{-1} A S - \lambda E| = |S^{-1} A S - S^{-1} (\lambda E) S| = |S^{-1} (A - \lambda E) S| = 
+|S^{-1}|\cdot |S| |A - \lambda E| = \underline{|A - \lambda E|} $
+\\ $|A - \lambda E| = (-1)^{n} \lambda ^{n} + (-1)^{n-1}\textit{tr}(A) \cdot \lambda^{n-1} + \dots + det(A) $
+\\ по т. Виета: $\left \{ 
+\begin{gathered} 
+\lambda_1 + \lambda_2 + \dots + \lambda_n = tr(A)\\
+\lambda_1 \cdot \lambda_2 \dots \cdot \lambda_n = det(A)
+\end{gathered}
+\right.
+$
+\begin{flushright}
+$\Box$
+\end{flushright}
+
+$$24.18(2)$$
+\\$L = L^{'} \oplus L^{''}, \lambda, V_{\lambda} - ?$
+\\Доказать, что $\varphi$ имеет базис из собственных векторов
+\\2) $\varphi$ - отражение в подпространство $L^{'}  параллельно \, L^{''}$
+\\$\forall a \in L$
+\\$\varphi: L \longmapsto L \quad \varphi(a) = a_{1} - a_{2}$, где $a_{1} = \textit{proj}_{L'}(a) \, \| L^{''}$, 
+$a_{2} \in L^{''}$
+\\Пусть $L^{'} = <e_{1}, \dots, e_{k}>, \, L^{''} = <e_{k+1}, \dots, e_{n}>$
+\\$L = L^{'} \oplus L^{''} = <e_{1}, \dots, e_{n}>$
+\\$\varphi(e_{1}) = e_{1}; \quad \varphi(e_{k+1}) = -e_{k+1};
+\\\vdots \qquad \qquad \qquad  \vdots
+\\\varphi(e_{k}) = e_{k};	\quad \varphi(e_{n}) = -e_{n}. $
+\\
+$A_{\varphi} = \begin{bmatrix}
+
+1 & 0 & 0 & 0 & 0 & 0 &\cdots & 0\\
+
+0 & 1 & 0 & 0 & 0 & 0 &\cdots & 0\\
+
+\vdots & \vdots & \ddots & \vdots  & \vdots & \vdots & \vdots & \vdots  \\
+
+0 & 0 & 0 & 1 & 0 & 0 &\cdots & 0\\
+0 & 0 & 0 & 0 & -1 &0 & \cdots & 0\\
+0 & 0 & 0 & 0 & 0 & -1 &\cdots & 0\\
+
+\vdots & \vdots & \vdots & \vdots & \vdots &\vdots & \ddots & \vdots &\\
+
+0 & 0 & 0 & 0 & 0 & 0 &\cdots & -1\\
+
+\end{bmatrix}$
+\\
+\\ $\Longrightarrow \exists$ базис из собственных векторов: $e = (e_{1}, \dots, e_{n});$
+\\$V_{\lambda_{i}} = <e_{i}>$
+$$24.20(3)$$
+\\$23.9(3) :\lambda, V_{\lambda}, \textit{diag}(A) - ?$
+\\$\varphi$ - ортогональное проектирование $V_{3}$ на $L: x+y+z = 0$
+\\$\overrightarrow{n} = 
+ \begin{pmatrix}
+1 \\ 1 \\ 1
+\end{pmatrix}$
+\\$\varphi(\overrightarrow{x}) = \overrightarrow{x} - pr_{\overrightarrow{n}}{\overrightarrow{x}} = \overrightarrow{x} - \dfrac{(\overrightarrow{x},\overrightarrow{n})}{\overrightarrow{n}^2}\overrightarrow{n}
+$
+\\Пусть в $V_{3}$ - ОНБ $e=(e_{1}, e_{2}, e_{3}):$
+\\
+\\$e_{1} =  
+\begin{pmatrix}
+1 \\ 0 \\ 0
+\end{pmatrix}, \, 
+e_{2} =  
+\begin{pmatrix}
+0 \\ 1 \\ 0
+\end{pmatrix}, \,
+e_{3} =  
+\begin{pmatrix}
+0 \\ 0 \\ 1
+\end{pmatrix}.$
+\\Тогда:
+\\$\varphi(e_{1}) =  
+\begin{pmatrix}
+\dfrac{2}{3} \\[0.25cm] -\dfrac{1}{3} \\[0.25cm] -\dfrac{1}{3}
+\end{pmatrix}, \, 
+\varphi(e_{2}) =
+\begin{pmatrix}
+-\dfrac{1}{3} \\[0.25cm] \dfrac{2}{3} \\[0.25cm] -\dfrac{1}{3}
+\end{pmatrix}, \,
+\varphi(e_{3}) =
+\begin{pmatrix}
+-\dfrac{1}{3} \\[0.25cm] -\dfrac{1}{3} \\[0.25cm] \dfrac{2}{3}
+\end{pmatrix}.$
+\\
+\\
+\\$A_{\varphi} = \dfrac{1}{3}$$\begin{pmatrix}
+2 & -1 & -1
+\\ -1 & 2&-1
+\\-1 & -1 & 2
+\end{pmatrix}$
+\\	$det(A - \lambda E)=0 \Longleftrightarrow -27(1 - \lambda)^{2}\lambda = 0$
+\\
+
+$\left[ 
+\begin{gathered} 
+\lambda_{1} = 1
+\\ \lambda_{2} = 0
+\end{gathered}
+\right.$ \\ \\
+\\1)$\lambda_{1} = 1$\\ 
+$A - E = -\dfrac{1}{3} \begin{pmatrix}
+1 & 1 & 1
+\\ 1 & 1&1
+\\1 & 1 & 1
+\end{pmatrix}$
+$\sim \begin{pmatrix} 1 & 1 & 1 |& 0 \end{pmatrix} \, \Rightarrow$
+\\$V_{\lambda_{1}} = <\begin{pmatrix}
+-1 \\ 1 \\ 0
+\end{pmatrix}, \begin{pmatrix}
+-1 \\ 0 \\ 1
+\end{pmatrix}>$
+\\\;2) $\lambda_{2} = 0 \\
+A \sim \begin{pmatrix}
+	2 & -1 & -1
+	\\ -1 & 2&-1
+	\\-1 & -1 & 2
+\end{pmatrix} \sim 
+\begin{pmatrix}
+	1 & 1 & -2
+	\\ -2 & 1&1
+	\\1 & -2 & 1
+\end{pmatrix} 
+\sim 
+\begin{pmatrix}
+1 & 1 & -2
+\\ -2 & 1&1
+\end{pmatrix} 
+\sim 
+\begin{pmatrix}
+1 & 1 & -2
+\\ 0 & 3& -3
+\end{pmatrix} 
+\sim 
+\begin{pmatrix}
+1 & 1 & -2
+\\ 0 & 1&-1
+\end{pmatrix} 
+\sim 
+\begin{pmatrix}
+1 & 0 & -1
+\\ 0 & 1&-1
+\end{pmatrix} 
+\Rightarrow \\
+V_{0} = < \begin{pmatrix}
+1 \\ 1 \\ 1
+\end{pmatrix}>$
+\\А в базисе $ \left(
+\begin{pmatrix}
+-1 \\ 1 \\ 0
+\end{pmatrix} ,
+\begin{pmatrix}
+-1 \\ 0 \\ 1
+\end{pmatrix} ,
+\begin{pmatrix}
+1 \\ 1 \\ 1
+\end{pmatrix} \right)$
+матрица преобразования имеет вид: \textit{diag}$(1, 1, 0)$
+
+$$24.30(22, 29)$$
+$\lambda, \, max \textit{dim}(V_{\lambda}); $ если есть базис из с.в., 
+то - матрица преобразования и геометрический смысл
+\\22) $\begin{pmatrix}
+0 & 0 & 0
+\\ 0 & -1&1
+\\0 & 0 & -1
+\end{pmatrix} 
+\\ \chi_{\varphi}(\lambda) = 0 \Longleftrightarrow det
+\begin{pmatrix}
+-\lambda & 0 & 0
+\\ 0 & -1-\lambda&1
+\\0 & 0 & -1-\lambda
+\end{pmatrix} 
+= -\lambda(1+\lambda)^{2} = 0$
+\\$\left[ 
+\begin{gathered} 
+\lambda_{1} = 0
+\\ \lambda_{2} = -1
+\end{gathered}
+\right.$
+\\
+\\\;1) $\lambda_{1} = 0\\
+\begin{pmatrix}
+0 & 0 & 0
+\\ 0 & -1&1
+\\0 & 0 & -1
+\end{pmatrix} 
+\sim
+\begin{pmatrix}
+ 0 & 1&-1
+\\0 & 0 & 1
+\end{pmatrix} 
+\sim
+\begin{pmatrix}
+ 0 & 1&0
+\\0 & 0 & 1
+\end{pmatrix} \Longrightarrow
+\\V_{\lambda_{0}} = <
+\begin{pmatrix}
+1 \\ 0 \\ 0
+\end{pmatrix} > $,
+\, \textit{dim}($ V_{\lambda_{0}} ) = 0$\\ 
+\\
+\;2) $\lambda_{2} = -1\\
+\begin{pmatrix}
+1 & 0 & 0
+\\ 0 & 0&1
+\\0 & 0 & 0
+\end{pmatrix}
+\sim
+ \begin{pmatrix}
+ 1 & 0 & 0
+ \\ 0 & 0&1
+ \end{pmatrix}
+\Longrightarrow \\
+V_{\lambda_{2}} = <
+\begin{pmatrix}
+0 \\ 1 \\ 0
+\end{pmatrix} >, \, \textit{dim}(V_{\lambda_{2}}) = 1 $
+$\Longrightarrow $ Нет базиса из собственных векторов.
+\\29) \\
+$  \begin{pmatrix}
+7 & -12 & 6
+\\ 10 & -19&10
+\\12 & -24 & 13
+\end{pmatrix} \\
+\\
+\textit{det}(A - \lambda E) = 0 \Longleftrightarrow
+\textit{det}
+\begin{pmatrix}
+7 - \lambda & -12 & 6
+\\ 10 & -19- \lambda&10
+\\12 & -24 & 13- \lambda
+\end{pmatrix} =\\
+ = (\lambda - 1)(49 - \lambda^{2} - 120 + 72) = 0 $\\
+$\left[ 
+\begin{gathered} 
+\lambda_{1} = 1
+\\ \lambda^{2} = 1
+\end{gathered}
+\right.
+\quad
+\left[ 
+\begin{gathered} 
+\lambda_{1} = 1
+\\ \lambda_{2} = -1
+\end{gathered}
+\right.$
+\\1) $\lambda_{1} = 1\\
+\begin{pmatrix}
+6 & -12 & 6
+\\ 10 & -20&10
+\\12 & -24 & 12
+\end{pmatrix} 
+\sim
+\begin{pmatrix}
+1 & -2 & 1
+\end{pmatrix} 
+\Longrightarrow
+V_{\lambda_{1}} = <
+\begin{pmatrix}
+2 \\ 1 \\ 0
+\end{pmatrix}, \begin{pmatrix}
+-1 \\ 0 \\ 1
+\end{pmatrix}>
+\\2) \lambda_{2} = -1\\
+\begin{pmatrix}
+8 & -12 & 6
+\\ 10 & -18&10
+\\12 & -24 & 14
+\end{pmatrix} 
+\sim
+\begin{pmatrix}
+4 & -6 & 3
+\\ 5 & -9&5
+\\6 & -12 & 7
+\end{pmatrix} 
+\sim
+\begin{pmatrix}
+8 & -12 & 6
+\\ 5 & -9&5
+\end{pmatrix}
+\sim
+\begin{pmatrix}
+1 & -3 & 2
+\\ 0 & 6&-5
+\end{pmatrix}
+\sim
+\begin{pmatrix}
+1 & 0 & -\frac{1}{2}
+\\ 0 & 1&-\frac{5}{6}
+\end{pmatrix} \Longrightarrow \\
+V_{\lambda_{2}}= <\begin{pmatrix}
+3 \\ 5 \\ 6
+\end{pmatrix}>
+\\A = \textit{diag} (1, 1, -1)$ в базисе $\left(
+\begin{pmatrix}
+2 \\ 1 \\ 0
+\end{pmatrix} ,
+\begin{pmatrix}
+-1 \\ 0 \\ 1
+\end{pmatrix} ,
+\begin{pmatrix}
+3 \\ 5 \\ 6
+\end{pmatrix} \right)$
+\\
+$$24.42(1,2)$$
+Оператор дифференцирования D. Найти собственные значения.\\
+1) $P^{n} = <1, x, \dots, x^{n}>\\
+\, P(x) = a_{n}x^{n} + a_{n-1}x^{n-1}+ \dots + a_{1}x + a_{0} \\
+P^{'}(x) = na_{n}x^{n-1} + (n-1)a_{n-1}x^{n-2}+ \dots + a_{1} \\ 
+A_{\textit{D}} = \begin{pmatrix}
+0 & 1 & 0 & \cdots & 0 & 0 \\
+0 & 0 & 2 & \cdots & 0 & 0 \\
+\vdots & \vdots & \vdots& \ddots & \vdots & \vdots\\
+0 & 0  &\cdots & 0 & n-1 & 0\\
+0 & 0 & 0  &\cdots & 0 & n\\
+0 & 0 & 0  &\cdots & 0& 0\\
+\end{pmatrix} 
+\\
+\textit{det} (A - \lambda E) = 0 \Longleftrightarrow \textit{det}\begin{pmatrix}
+-\lambda & 1 & 0 & \cdots & 0 & 0 \\
+0 & -\lambda & 2 & \cdots & 0 & 0 \\
+\vdots & \vdots & \ddots& \ddots & \vdots & \vdots\\
+0 & 0  &\cdots & -\lambda & n-1 & 0\\
+0 & 0 & 0 &\cdots & -\lambda & n\\
+0 & 0 & 0  &\cdots & 0& -\lambda\\
+\end{pmatrix} = 0 \\
+\Longleftrightarrow (-1)^{n}\lambda = 0 
+\Longleftrightarrow \lambda = 0$  - собственное значение\\
+$\begin{pmatrix}
+0 & 1 & 0 & \cdots & 0 & 0 \\
+0 & 0 & 2 & \cdots & 0 & 0 \\
+\vdots & \vdots & \vdots& \ddots & \vdots & \vdots\\
+0 & 0  &\cdots & 0 & n-1 & 0\\
+0 & 0 & 0  &\cdots & 0 & n\\
+0 & 0 & 0  &\cdots & 0& 0\\
+\end{pmatrix} 
+\sim
+\begin{pmatrix}
+0 & 1 & 0 & \cdots & 0 & 0 \\
+0 & 0 &1 & \cdots & 0 & 0 \\
+\vdots & \vdots & \vdots& \ddots & \vdots & \vdots\\
+0 & 0  &\cdots & 0 & 1 & 0\\
+0 & 0 & 0  &\cdots & 0 & 1\\
+0 & 0 & 0  &\cdots & 0& 0\\
+\end{pmatrix} \Longrightarrow
+\\V_{\lambda} = <
+\begin{pmatrix}
+1 \\ 0 \\ \vdots \\ 0
+\end{pmatrix} 
+>$ - собственное подпространство 
+$$24.53$$
+$\mathds{M}_{n\times n}; \tau: A \longmapsto A^{T}\\
+\tau - $ линейное, $\tau^{2} = \iota; \, \lambda, V_{\lambda}	 $ - ?
+\\ Доказать, что: $ \mathds{R}_{n\times n} =  V_{\lambda_{1}} \oplus V_{\lambda_{2}} \oplus \dots \oplus V_{\lambda_{m}}.$
+$\\ \triangleright$
+линейность - очевидна.
+по определению: $A^{T} = \lambda A\\ $
+1) на главной диангонали A $\exists a_{ii} \neq 0. $
+\\тогда рассмотрим $\lambda = 1: A^{T} = A; $
+\\тогда возьмем стандартный базис в пространстве симметрических матриц $n \times n$ 
+\\2) $\forall i \, a_{ii} = 0;\\ A^{T} = \lambda A\\$
+Пусть $\exists i,j \in \mathds{N}: \\
+a=a_{ij}\neq 0; \,b=  a_{ji}\neq 0\\$
+Тогда:
+\[
+\left.
+\begin{aligned}
+a = a^{*} & =\lambda b\\
+b = b^{*} & =\lambda a \\
+\end{aligned}
+\right\}
+\Longrightarrow ab=\lambda^{2} ab \Longrightarrow \lambda^{2}=1 \Longrightarrow \left[ 
+\begin{gathered} 
+\lambda_{1} = 1
+\\ \lambda_{2} = -1
+\end{gathered}
+\right.\\ \]
+\\2.1) $\lambda_{1} = 1$ - рассмотрено ранее\\
+2.2) $\lambda_{2} = -1 : A = -A^{T} $ - тогда рассмотрим базис в пространстве кососимметрических матриц $n \times n$.
+\\Теперь разберемся с прямой суммой.\\
+3)  $ A \in \mathds{M}_{n\times n} $ \\
+$ A = B + C \\
+\left\{ 
+\begin{gathered} 
+a_{ij} = b_{ij} + c_{ij}
+\\a_{ji} = b_{ij} - c_{ij}
+\end{gathered}
+\right. \Longrightarrow \begin{gathered} 
+b_{ij} = \frac{a_{ij} + a_{ji}}{2}
+\\c_{ij} = \frac{a_{ij} - a_{ji}}{2}
+\end{gathered}\\
+B = \dfrac{A + A^{T}}{2}\\
+C = \dfrac{A - A^{T}}{2}$\\
+\begin{flushright}
+	$\Box$
+\end{flushright}
+\subsection{Инвариантные подпространства}
+$$24.69$$
+$U_{1}, U_{2}, \dots, U_{n}$ - инвариантные подпространства относительно $\varphi: \\\varphi(U_{i}) \subset U_{i} $
+$\\\vartriangleright (U_{1} + U_{2} + \dots + U_{n}) \supset \varphi(U_{1} + U_{2} + \dots + U_{n}) \\
+\, x \in U_{1} \quad \varphi(x) \in U_{1} \quad U_{1} = <e_{1},\dots, e_{k}>\\
+\, x \in U_{2} \quad \varphi(x) \in U_{2} \quad U_{1} = <e_{k + 1},\dots, e_{m}>\\
+\vdots 	\qquad \qquad \vdots \qquad \qquad \quad \vdots\\
+\, x \in U_{n} \quad \varphi(x) \in U_{n} \quad U_{n} = <e_{l+1},\dots, e_{n}>\\
+x \in (U_{1} + U_{2} + \dots + U_{n}) \Longleftrightarrow x \in <e_{1},\dots, e_{k}, e_{k + 1},\dots, e_{m}, \dots,e_{l+1},\dots, e_{n} >\\
+\varphi(x) = \sum\limits_{i = 1}^n\lambda_{i}\varphi(e_{i}) = \sum\limits_{i = 1}^k\lambda_{i}\varphi(e_{i}) + \dots + \sum\limits_{i = l + 1}^n\lambda_{i}\varphi(e_{i})$, \\где каждая из сумм принадлежит соответственному $U_{i}$\\ $\Longrightarrow  \varphi(x) \in (U_{1} + U_{2} + \dots + U_{n}).\\\\$
+\begin{flushright}
+	$\Box$
+\end{flushright}
+$$24.70$$
+$\varphi \in L(V, V)$
+\\Доказать: $\forall U \leqslant V: Im\varphi \subset U; U$ - инвариантно относительно $\varphi\\
+\vartriangleright \forall x \in U: x \in V \Longrightarrow \varphi(x) \subset \varphi(V) = Im\varphi \subset U $
+\begin{flushright}
+$\Box$
+\end{flushright}
+\section{Билинейные и квадратичные функции}
+$$32.2(3)$$
+$x_{1}^2 + 4x_{1}x_{2} + 4x_{1}x_{3} + 5x_{2}^2 + 12x_{2}x_{3} + 7x_{3}^2 $
+\\$\begin{pmatrix}
+1 & 2 & 2
+\\ 2 & 5&6
+\\2 & 6 & 7
+\end{pmatrix} $
+\\$$32.3(5)$$
+$\begin{pmatrix}
+1 & 1 & 1 &1
+\\ 1 & 1&-1&-1
+\\1 & -1 & 1& -1
+\\1 & -1 & -1&1
+\end{pmatrix} $\\
+$x_{1}^2 + x_{2}^2 +x_{3}^2 + x_{4}^2 + 2x_{1}x_{2} +  2x_{1}x_{3} +  2x_{1}x_{4} -  2x_{2}x_{3} -  2x_{2}x_{4} - 2x_{3}x_{4}\\$
+
+$$32.7(6)$$
+$5x_{1}^2 + 5x_{2}^2 + 3x_{3}^2 + 2x_{1}x_{2} + 2\sqrt{2}x_{1}x_{3} + 2\sqrt{2}x_{2}x_{3}$\\
+\\$
+	e_{1}^{'} = e_{1} + e_{2} - 2\sqrt{2}e_{3};
+	\\e_{2}^{'} = e_{1} - e_{2};
+	\\e_{3}^{'} = \sqrt{2}e_{1} + \sqrt{2}e_{2} + e_{3};
+$\\
+$e^{'} = eS;$\\
+\[S = \begin{pmatrix}
+1 & 1 & \sqrt{2}
+\\ 1 & -1& \sqrt{2}
+\\-2\sqrt{2} & 0 & 1
+\end{pmatrix}, 
+\, B = \begin{pmatrix}
+5 & 1 & \sqrt{2}
+\\ 1 & 5& \sqrt{2}
+\\\sqrt{2} & \sqrt{2} & 3
+\end{pmatrix} 
+\]
+$B^{'} = S^{T}B\overline{S} = \begin{pmatrix}
+1 & 1 & -2\sqrt{2}
+\\ 1 & -1& 0
+\\\sqrt{2} & \sqrt{2} & 1
+\end{pmatrix}
+\begin{pmatrix}
+5 & 1 & \sqrt{2}
+\\ 1 & 5& \sqrt{2}
+\\\sqrt{2} & \sqrt{2} & 3
+\end{pmatrix} 
+\begin{pmatrix}
+1 & 1 & \sqrt{2}
+\\ 1 & -1& \sqrt{2}
+\\-2\sqrt{2} & 0 & 1
+\end{pmatrix} =\\=\begin{pmatrix}
+2 & 2 & -4\sqrt{2}
+\\ 4 & -4& 0
+\\7\sqrt{2} & 7\sqrt{2} & 7
+\end{pmatrix} \begin{pmatrix}
+1 & 1 & \sqrt{2}
+\\ 1 & -1& \sqrt{2}
+\\-2\sqrt{2} & 0 & 1
+\end{pmatrix} = \begin{pmatrix}
+20 & 0 & 0
+\\ 0 & 8& 0
+\\0 & 0 & 35
+\end{pmatrix}
+$
+$\\\\B^{'} \underset{e^{'}}\longleftrightarrow 20{x_{1}^{'}}^{2} + 8{x_{2}^{'}}^{2} + 35{x_{3}^{'}}^{2}\\
+$
+$$32.8(3, 8, 13)$$
+$
+3)\, -x_{1}x_{2} \longleftrightarrow \begin{pmatrix}
+0 & -\frac{1}{2} & 0
+\\ -\frac{1}{2} & 0& 0
+\\0 & 0 & 0
+\end{pmatrix}
+\sim
+\begin{pmatrix}
+0 & 1 & 0
+\\ 1 & 0& 0
+\\0 & 0 & 0
+\end{pmatrix}
+\sim
+\begin{pmatrix}
+2 & 1 & 0
+\\ 1 & 0& 0
+\\0 & 0 & 0
+\end{pmatrix}
+\sim
+\begin{pmatrix}
+2 &0 & 0
+\\ 0 & -\frac{1}{2}& 0
+\\0 & 0 & 0
+\end{pmatrix}
+\sim \\ \sim
+\begin{pmatrix}
+1 &0 & 0
+\\ 0 & -1& 0
+\\0 & 0 & 0
+\end{pmatrix} \longleftrightarrow {x_{1}^{'}}^2 - {x_{2}^{'}}^2\\
+8)\, x_{1}^2 + 2x_{1}x_{2} + 2x_{1}x_{3} - 3x_{2}^2 - 6x_{2}x_{3} - 4x_{3}^2\\
+\longleftrightarrow \begin{pmatrix}
+1 & 1 & 1
+\\ 1 & -3& -3
+\\1 & -3 & -4
+\end{pmatrix} \sim
+\begin{pmatrix}
+1 & 1 & 0
+\\ 1 & -3& 0
+\\0 & 0 & -1
+\end{pmatrix}
+\sim
+\begin{pmatrix}
+\frac{5}{3} & 0 & 0
+\\ 0 & -3& 0
+\\0 & 0 & -1
+\end{pmatrix}
+\sim
+\begin{pmatrix}
+5 & 0 & 0
+\\ 0 & -3& 0
+\\0 & 0 & -1
+\end{pmatrix}
+\longleftrightarrow 5{x_{1}^{'}}^2 - 3{x_{2}^{'}}^2 - {x_{3}^{'}}^2 \\
+13) \, x_{1}^2 + 2x_{1}x_{2} + 2x_{2}x_{3} + 2x_{2}^2 + 2x_{4}x_{3} + 2x_{3}^2 + 3x_{4}^2\\
+(x_{1} + x_{2})^{2} +(x_{2} + x_{3})^2 + (x_{3} + x_{4})^2 + 2x_{4}^2 = {x_{1}^{'}}^2 + {x_{2}^{'}}^2 + {x_{3}^{'}}^2 + {x_{4}^{'}}^2\\
+$
+$$32.10(2, 6)$$
+$2) x_{1}y_{1} - x_{1}y_{2} - x_{2}y_{1} + x_{2}y_{2} \longleftrightarrow x_{1}(y_{1} - y_{2}) - x_{2}(y_{1} - y_{2}) \longleftrightarrow x_{1}^{'}y_{1}^{'}\\
+6)x_{1}y_{1} + 2x_{2}y_{2} + 3x_{3}y_{3} + x_{1}y_{2} + x_{2}y_{1}+x_{1}y_{3}+x_{3}y_{1} + 2x_{2}y_{3} + 2x_{3}y_{2} \longleftrightarrow x_{1}^2 + 2x_{1}x_{2} + 2x_{1}x_{3}+ 2x_{2}x_{3} + 2x_{2}^2 + 3x_{3}^2 =
+(x_1 + x_2 + x_3)^2 + x_2^2 + 2x_3^2 = \\= {x_{1}^{'}}^2 + {x_{2}^{'}}^2 + {x_{3}^{'}}^2$
+$$32.16$$
+Доказать:
+$sign\Delta_n = (-1)^n \Longleftrightarrow \text{квадратная форма отрицательно определена.}
+\\\rhd\, $k - отрицательно определена $\Longleftrightarrow$ $b = -k $ - положительно определена\\
+$ \exists \,   \underset{e \longrightarrow e^{'}} S : \, k \underset{e^{'}}\longleftrightarrow \begin{pmatrix}
+   \gamma_1 & 0 		& \cdots		& 0
+\\ 0 		& \gamma_2	& 0 			& \vdots
+\\ 0 		& 0 	   	& \ddots		& 0
+\\ 0 		& 0			& 0 			& \gamma_n
+\end{pmatrix}\\
+b = -k \underset{e^{'}}\longleftrightarrow \begin{pmatrix}
+-\gamma_1 	& 0 		& \cdots		& 0
+\\ 0 		& -\gamma_2	& 0 			& \vdots
+\\ 0 		& 0 	   	& \ddots		& 0
+\\ 0 		& 0			& 0 			& -\gamma_n
+\end{pmatrix}$ - положительно определена $\underset{кр. Сильвестра}\Longleftrightarrow \left\{
+\begin{gathered} 
+|B_1^{'}| > 0\\
+\vdots\\
+|B_n^{'}| > 0
+\end{gathered} 
+\right.$ 
+\noindent $|B_1^{'}| > 0 \Longleftrightarrow |B_1| > 0 \Longrightarrow -\gamma_1 > 0 \Longrightarrow |B_1| = \gamma_1 < 0\\
+\vdots\\
+|B_n^{'}| > 0 \Longleftrightarrow |B_n| > 0 \Longrightarrow (-1)^n \gamma_1\cdots\gamma_n > 0 \Longrightarrow\\\Longrightarrow sign|B_n| = sign(\gamma_1 \cdots \gamma_n) = (-1)^n
+$\begin{flushright}
+$\Box$
+\end{flushright}
+\section{Евклидовы пространства}
+\subsection{Матрица Грама, ортоганальное дополнение, проекция, ортогонализация}
+$$25.7$$
+$f, g \in \underset{[-1;1]} C\\
+(f,g) = \int\limits_{-1}^{1}fgdt $ - доказать, что это скалярное произведение\\
+$\rhd (f,g) = (g, f) - очевидно\\
+(f_1 + f_2, g) = \int\limits_{-1}^{1}(f_1 + f_2)gdt = \int\limits_{-1}^{1}f_1gdt + \int\limits_{-1}^{1}f_2gdt = (f_1,g) + (f_2, g)\\
+(\lambda f,g) = \int\limits_{-1}^{1}\lambda fgdt = \lambda\int\limits_{-1}^{1}fgdt = \lambda(f,g)
+$\begin{flushright}
+	$\Box$
+\end{flushright}
+$$25.25(1)$$
+$ a = \begin{pmatrix}
+1 \\ 1 \\ 1
+\end{pmatrix}, b = \begin{pmatrix}
+1 \\ 3 \\ 1
+\end{pmatrix}; G = \begin{pmatrix}
+   1 & -2& 1
+\\ -2& 5& -4
+\\ 1 & -4 & 6
+\end{pmatrix}\\
+(a, b) = X^{T}G\overline{Y} = \begin{pmatrix}
+1 & 1 & 1
+\end{pmatrix}
+\begin{pmatrix}
+1 & -2& 1
+\\ -2& 5& -4
+\\ 1 & -4 & 6
+\end{pmatrix}
+\begin{pmatrix}
+1 \\ 3 \\ 1
+\end{pmatrix} = \begin{pmatrix}
+0 & -1 & 3
+\end{pmatrix}
+\begin{pmatrix}
+1 \\ 3 \\ 1
+\end{pmatrix} = 0
+$
+$$25.23$$
+$
+e = (e_1 \dots e_n), \forall x \in V: (x, x) = x_1^2 + x_2^2 + ... + x_n^2\\
+Доказать: e - ОНБ\\
+\rhd \, \bordermatrix{
+	& \cr
+	&  0  \cr
+	& \vdots  \cr
+  k \longrightarrow & 1  \cr
+	& \vdots \cr
+	& 0  \cr} = e_k,\\ (e_k, e_k) = \begin{pmatrix}
+0 & \dots 1& \dots & 0
+\end{pmatrix} G \begin{pmatrix}
+0 \\ \vdots \\ 1 \\\vdots \\ 0
+\end{pmatrix} = \sum\limits_{i = 1}^n g_{ik} = 1 - \forall k = \overline{1,n}
+\\
+\sum\limits_{i = 1}^n (e_i, e_k) = 1 \Longleftrightarrow (e_1 + \dots + e_{k - 1} + e_{k + 1} + \dots + e_n, e_k) + (e_k, e_k) = 1\\
+\Longrightarrow (e_1, e_k) + \dots + (e_{k - 1}, e_k) +(e_{k + 1}, e_k) + \dots + (e_n, e_k) = 0  \\\Longrightarrow(e_i, e_k) = \delta_{ik} \, \forall i,k \in \overline{1,n} \\ \Longrightarrow
+G = E_n \Longrightarrow e - ОНБ.
+$
+\begin{flushright}
+	$\Box$
+\end{flushright}
+$$26.13(4)$$
+$e - ОНБ\\
+L = <\begin{pmatrix}
+4 \\ 3 \\ -3 \\2
+\end{pmatrix}, 
+\begin{pmatrix}
+-1 \\ 3 \\ 2 \\ -3
+\end{pmatrix},
+\begin{pmatrix}
+2 \\ 9 \\ 1 \\ -4
+\end{pmatrix}>\\
+а) матрица \,L^{\perp} ?\\
+б) базис \,L^{\perp}?\\
+\rhd а) \, Пусть \, x = \begin{pmatrix}
+x_1 \\ x_2 \\ x_3 \\ x_4
+\end{pmatrix} \in L^{\perp}\\
+\left\{
+\begin{gathered} 
+(x, a_1) = 0\\
+(x, a_2) = 0\\
+(x, a_3) = 0\\
+(x, a_4) = 0\\
+\end{gathered} 
+\right. \Longleftrightarrow \begin{pmatrix}
+   4 & 3 & -3 & 2
+\\ -1 & 3& 2 & -3
+\\ 2 & 9 & 1 & -4
+\end{pmatrix}\\
+\quad б) \begin{pmatrix}
+4 & 3 & -3 & 2
+\\ -1 & 3& 2 & -3
+\\ 2 & 9 & 1 & -4
+\end{pmatrix} 
+\sim \begin{pmatrix}
+0 & 15 & 5 & -10
+\\ 2 & 9 & 1 & -4
+\end{pmatrix} 
+\sim \begin{pmatrix}
+2 & 9 & 1 & -4\\
+0 & 3 & 1 & -2
+\end{pmatrix} 
+\sim \begin{pmatrix}
+2 & 0 & -2 & -2\\
+0 & 3 & 1 & -2
+\end{pmatrix} 
+\sim \begin{pmatrix}
+1 & 0 & -1 & -1\\
+0 & 1 & \dfrac{1}{3} & -\dfrac{2}{3}
+\end{pmatrix}; \\
+базис: \, <  \begin{pmatrix}
+3 \\ -1 \\ 3 \\ 0
+\end{pmatrix} ,
+\begin{pmatrix}
+ 3 \\ 2 \\ 0 \\ 3
+ \end{pmatrix} >.
+$
+$$26.14(4)$$
+$ Найти \,L^{\perp}.\\
+L = \begin{pmatrix}
+1 & -5 & -6 & 11\\
+5 & 1 & -4 & 3\\
+1 & 8 & 7 & 15
+\end{pmatrix} \\
+$Вполне очевидно, что строки порождающей системы будут являться координатными стоблцами векторов, образующих $L^{\perp} $. Поэтому: $
+\\ L^{\perp} = <\begin{pmatrix}
+1 \\ -5 \\ -6 \\ 11
+\end{pmatrix} ,
+\begin{pmatrix}
+5 \\ 1 \\ -4 \\ 3
+\end{pmatrix} , 
+\begin{pmatrix}
+1 \\ 8 \\ 7 \\ 15
+\end{pmatrix}>
+$\\
+Нужно выделить линейно независимую систему векторов из этой линейной оболочки. Это и будет искомый базис.\\
+$\begin{pmatrix}
+1 & -5 & -6 & 11\\
+5 & 1 & -4 & 3\\
+1 & 8 & 7 & 15
+\end{pmatrix}
+\sim
+\begin{pmatrix}
+0 & -39 & -39 & -72\\
+0 & 13 & 13 & 4\\
+1 & 8 & 7 & 15
+\end{pmatrix}
+\sim
+\begin{pmatrix}
+1 & 8 & 7 & 15\\
+0 & 13 & 13 & 4\\
+0 & 0 & 0 & 1
+\end{pmatrix}
+$ \\$\Longrightarrow$ очевидно, что ранг данной матрицы = 3. Значит, исходная система линейно независимая и ее можно принять за базисную.
+$$26.27(3)$$
+$3) e - ОНБ, L \leqslant V
+\\a_1 =  \begin{pmatrix}
+2 \\ 1 \\ 1 \\ 2
+\end{pmatrix}, L = <a_1>\\
+x = e\xi; \, \xi = \begin{pmatrix}
+5 \\ 3 \\ 7 \\ 0
+\end{pmatrix}>.
+\\Найти: x^{\perp} \in L^{\perp}, x^{\shortparallel} \in L
+\\\rhd x = x^{\perp} + x^{\shortparallel} \\
+(x, a_1) = (x^{\shortparallel}, a_1) + (x^{\perp}, a_1) = (x^{\shortparallel}, a_1)\\
+x^{\shortparallel} \in L \Longrightarrow x^{\shortparallel} =\alpha a_1\\
+(x^{\shortparallel}, a_1) = \alpha(a_1, a_1) = (x, a_1) \Longrightarrow \alpha = \dfrac{(x, a_1)}{(a_1, a_1)} = \dfrac{20}{10} = 2\\
+x^{\perp} = x - x^{\shortparallel} = \begin{pmatrix}
+1 \\ 1 \\ 5 \\ -4
+\end{pmatrix}\\
+x^{\shortparallel} = \begin{pmatrix}
+4\\ 2 \\ 2 \\ 4
+\end{pmatrix} \quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\Box$
+
+$$26.28(4)$$
+$4) e - ОНБ, L \leqslant V\\
+L = \{ \xi: A\xi = 0\}, \, A =  \begin{pmatrix}
+2 & -3 & 5 & 1\\
+3 & -5 & 6 & 1
+\end{pmatrix}\\
+x = e\xi; \, \xi = \begin{pmatrix}
+7 \\ -5 \\ 9 \\ 4
+\end{pmatrix}.
+\\Найти: x^{\perp} \in L^{\perp}, x^{\shortparallel} \in L
+\\\rhd
+$ очевидно, исходя из задания $L,\, L^{\perp} = <\bordermatrix{
+& a_1 \cr
+&2 \cr 
+&-3 \cr 
+& 5 \cr 
+& 1 \cr
+},
+\bordermatrix{
+	& a_2 \cr
+	&3 \cr 
+	&-5 \cr 
+	& 6 \cr 
+	& 1 \cr
+}>\\
+x = x^{\perp} + x^{\shortparallel}\\
+x^{\perp} = \alpha_1 a_1 + \alpha_2 a_2\\
+(x^{\perp}, a_i) = \alpha_1 (a_1, a_i) + \alpha_2 (a_2, a_i) = (x, a_i)\\ \Longrightarrow
+\left\{
+\begin{gathered} 
+(x, a_1) = \alpha_1 (a_1, a_1) + \alpha_2 (a_2, a_1)\\
+(x, a_2) = \alpha_1 (a_1, a_2) + \alpha_2 (a_2, a_2)\\
+\end{gathered} 
+\right. \\
+\left( \begin{array}{cc|c}
+39 & 52 & 78 \\
+52 & 71 & 104
+\end{array} \right) \sim
+\left( \begin{array}{cc|c}
+3 & 4 & 6 \\
+52 & 71 & 104
+\end{array} \right) \sim
+\left( \begin{array}{cc|c}
+1 & \dfrac{4}{3} & 2 \\[0.25cm]
+1 & \dfrac{71}{52} & 2
+\end{array} \right) \sim
+\left( \begin{array}{cc|c}
+1 & \dfrac{4}{3} & 2 \\[0.25cm]
+0 & \dfrac{5}{156} & 0
+\end{array} \right) \sim
+\left( \begin{array}{cc|c}
+1 & 0 & 2 \\
+0 & 1 & 0
+\end{array} \right)
+\\\left\{
+\begin{gathered} 
+\alpha_{1} = 2
+\\ \alpha_{2} = 0
+\end{gathered}
+\right. \\
+x^{\perp} = \begin{pmatrix}
+4 \\ -6 \\ 10 \\ 2
+\end{pmatrix} \in L^{\perp}\\
+x^{\shortparallel} = x - x^{\perp} = \begin{pmatrix}
+7 \\ -5 \\ 9 \\ 4
+\end{pmatrix} - 
+\begin{pmatrix}
+4 \\ -6 \\ 10 \\ 2
+\end{pmatrix} = \begin{pmatrix}
+3 \\ 1 \\ -1 \\ 2
+\end{pmatrix} \in L^{\shortparallel}
+$ \begin{flushright}
+	$\Box$
+\end{flushright}
+$$26.42(4)$$
+$
+4) \bordermatrix{
+	& e_1 \cr
+	&2 \cr 
+	&1 \cr 
+	& 2 \cr 
+}, \bordermatrix{
+& e_2 \cr
+&6 \cr 
+&2 \cr 
+& 2 \cr 
+}, \bordermatrix{
+& e_3 \cr
+&1 \cr 
+&4 \cr 
+& -3 \cr 
+} \\ \\
+h_1 = e_1\\
+h_2 = e_2 - \dfrac{(e_2, h_1)}{(h_1, h_1)}h_1 \\
+h_3 = e_3 - \dfrac{(e_3, h_2)}{(h_2, h_2)}h_2 - \dfrac{(e_3, h_1)}{(h_1, h_1)}h_1 \\
+h_2 = \begin{pmatrix}
+6 \\ 2 \\ 2
+\end{pmatrix} - 2 \begin{pmatrix}
+2 \\ 1 \\ 2
+\end{pmatrix} = 
+\begin{pmatrix}
+2 \\ 0 \\ -2
+\end{pmatrix} \\
+h_3 = \begin{pmatrix}
+1 \\ 4 \\ -3
+\end{pmatrix} - \begin{pmatrix}
+2 \\ 0 \\ -2
+\end{pmatrix} - 0\begin{pmatrix}
+2 \\ 1 \\ 2
+\end{pmatrix} = \begin{pmatrix}
+-1 \\ 4 \\ -1
+\end{pmatrix} \\
+\text{Ответ: } \begin{pmatrix}
+2 \\ 1 \\ 2
+\end{pmatrix},\begin{pmatrix}
+2 \\ 0 \\ -2
+\end{pmatrix},\begin{pmatrix}
+-1 \\ 4 \\ -1
+\end{pmatrix}.
+$
+$$26.44(4)$$
+$
+4) \bordermatrix{
+	& e_1 \cr
+	&-3 \cr 
+	&2 \cr 
+	& 1 \cr 
+}, \bordermatrix{
+& e_2 \cr
+&-8 \cr 
+&5 \cr 
+& 4 \cr 
+}, \bordermatrix{
+& e_3 \cr
+&2 \cr 
+&4 \cr 
+& 0 \cr 
+}; \quad G = A_{207} = \begin{pmatrix}
+1 & 2 & 0 \\
+2 & 5 & -2 \\
+0 & -2 & 5
+\end{pmatrix} \\
+h_1 = \begin{pmatrix}
+-3 \\ 2 \\ 1
+\end{pmatrix}\\
+(e_2, h_1) = \begin{pmatrix}
+-8 & 5 & 4
+\end{pmatrix} 
+\begin{pmatrix}
+1 & 2 & 0 \\
+2 & 5 & -2 \\
+0 & -2 & 5
+\end{pmatrix}
+\begin{pmatrix}
+-3 \\ 2 \\ 1
+\end{pmatrix} = \begin{pmatrix}
+2 & 1 & 10
+\end{pmatrix}\begin{pmatrix}
+-3 \\ 2 \\ 1
+\end{pmatrix} = 6\\
+(e_3, h_1) = \begin{pmatrix}
+2 & 4 & 0
+\end{pmatrix} 
+\begin{pmatrix}
+1 & 2 & 0 \\
+2 & 5 & -2 \\
+0 & -2 & 5
+\end{pmatrix}
+\begin{pmatrix}
+-3 \\ 2 \\ 1
+\end{pmatrix} = \begin{pmatrix}
+10 & 24 & -8
+\end{pmatrix}\begin{pmatrix}
+-3 \\ 2 \\ 1
+\end{pmatrix} = 10\\
+(h_1, h_1) = \begin{pmatrix}
+-3 & 2 & 1
+\end{pmatrix} 
+\begin{pmatrix}
+1 & 2 & 0 \\
+2 & 5 & -2 \\
+0 & -2 & 5
+\end{pmatrix}
+\begin{pmatrix}
+-3 \\ 2 \\ 1
+\end{pmatrix} = \begin{pmatrix}
+1 & 2 & 1
+\end{pmatrix}\begin{pmatrix}
+-3 \\ 2 \\ 1
+\end{pmatrix} = 2\\
+h_2 = \begin{pmatrix}
+-8 \\ 5 \\ 4
+\end{pmatrix} - 3\begin{pmatrix}
+-3 \\ 2 \\ 1
+\end{pmatrix} =\begin{pmatrix}
+1 \\ -1 \\ 1
+\end{pmatrix}\\
+(h_2, h_2) = \begin{pmatrix}
+1 & -1 & 1
+\end{pmatrix} 
+\begin{pmatrix}
+1 & 2 & 0 \\
+2 & 5 & -2 \\
+0 & -2 & 5
+\end{pmatrix}
+\begin{pmatrix}
+1 \\ -1 \\ 1
+\end{pmatrix} = \begin{pmatrix}
+-1 & -5 & 7
+\end{pmatrix}\begin{pmatrix}
+1 \\ -1 \\ 1
+\end{pmatrix} = 11\\
+(e_3, h_2) = \begin{pmatrix}
+2 & 4 & 0
+\end{pmatrix} 
+\begin{pmatrix}
+1 & 2 & 0 \\
+2 & 5 & -2 \\
+0 & -2 & 5
+\end{pmatrix}
+\begin{pmatrix}
+1 \\ -1 \\ 1
+\end{pmatrix} = \begin{pmatrix}
+10 & 24 & -8
+\end{pmatrix}\begin{pmatrix}
+1 \\ -1 \\ 1
+\end{pmatrix} = -22\\
+h_3 = \begin{pmatrix}
+2 \\ 4 \\ 0
+\end{pmatrix} + 2\begin{pmatrix}
+1 \\ -1 \\ 1
+\end{pmatrix} - 5\begin{pmatrix}
+-3 \\ 2 \\ 1
+\end{pmatrix} = \begin{pmatrix}
+19 \\ -8 \\ -3
+\end{pmatrix}\\
+(h_3, h_3) = \begin{pmatrix}
+19 & -8 & -3
+\end{pmatrix} 
+\begin{pmatrix}
+1 & 2 & 0 \\
+2 & 5 & -2 \\
+0 & -2 & 5
+\end{pmatrix}
+\begin{pmatrix}
+19 \\ -8 \\ -3
+\end{pmatrix} = \begin{pmatrix}
+3 & 4 & 1
+\end{pmatrix}\begin{pmatrix}
+19 \\ -8 \\ -3
+\end{pmatrix} = 22\\
+\widetilde{h_1} = \dfrac{1}{|h_1|}h_1 = \dfrac{1}{\sqrt{2}}\begin{pmatrix}
+-3 \\ 2 \\ 1
+\end{pmatrix}\\
+\widetilde{h_2} = \dfrac{1}{|h_2|}h_2 = \dfrac{1}{\sqrt{11}}\begin{pmatrix}
+1 \\ -1 \\ 1
+\end{pmatrix}\\
+\widetilde{h_3} = \dfrac{1}{|h_3|}h_3 = \dfrac{1}{\sqrt{22}}\begin{pmatrix}
+19 \\ -8 \\ -3
+\end{pmatrix}\\
+$
+$$\textbf{T.9}$$
+$G = \begin{pmatrix}
+1 & 2 & 1 \\
+2 & 1 & 1 \\
+1 & 1 & 2
+\end{pmatrix} - \text{может ли быть матрицей Грамма в каком-либо базисe?} \\
+det G < 0 \Rightarrow G  \text{ - не положительно определена, значит не может быть матрицей Грамма}
+$ 
+\newpage
+\subsection{Линейные преобразования евклидовых пространств. Самосопряженные и ортогональные преобразования}
+$$28.34(1)$$
+$
+\text{Пусть } L \subset V \text{ - инвариантно относительно } \varphi \\
+\text{Доказать: } L^{\perp} \text{ - инвариантно относительно } \varphi^*\\
+\\\rhd
+	\varphi^* - \text{сопряженное преобразование для }\varphi \\
+	(x, \varphi(y)) = (\varphi^*(x),y)\\
+	\forall y \in L: \quad \varphi(y) \subset L \\
+	\forall x \in L^{\perp}:\\
+	(x, \varphi(y)) = 0 = (\varphi^*(y), y) \Rightarrow \varphi^*(x) \in L^{\perp}	
+$ \begin{flushright}
+	$\Box$
+\end{flushright}
+$$\textbf{T.11}$$
+$1) A^* = \begin{pmatrix}
+1 & 1 \\
+-1 & 1 
+\end{pmatrix}\\$
+Предположим, что данная матрица действительно является матрицей с/c преобразования.
+Тогда, по основной теореме о с/с преобразованиях, у него должен существовать ОНБ из собственных векторов.\\
+$det \begin{pmatrix}
+1 - \lambda & 1 \\
+-1 & 1 - \lambda 
+\end{pmatrix} = 1 + (1-\lambda)^2 = 0 \text{ - нет корней } \Rightarrow \text{предположение не верно; не может.}\\
+2) A = \begin{pmatrix}
+2 & 1 \\
+-1 & 4 
+\end{pmatrix} \\
+\chi_{\varphi}(\lambda) = 0\\
+(2-\lambda)(4-\lambda) + 1 = 0\\
+(\lambda - 3)^2 = 0 \Longleftrightarrow \lambda = 3\\
+\text{Найдем собственные вектора:}\\
+\lambda = 3:\\
+ \begin{pmatrix}
+ -1 & 1 \\
+ -1 & 1 
+ \end{pmatrix} \sim 
+  \begin{pmatrix}
+  1 & -1
+  \end{pmatrix}  \Rightarrow V_{\lambda}=  <\begin{pmatrix}
+  1 \\ 1
+  \end{pmatrix}> - \text{ собственное подпространство, }\\ dim V_{\lambda} = 1 \\
+  \text{Но, алгебраическая кратность корня = 2} \\ \Longrightarrow \nexists \text{ базиса из собственных векторов } \Longrightarrow \text{не может быть матрицей с/с преобразования.}
+$
+$$29.19(4,8)$$
+$\text{Найти матрицу перехода к ОНБ из собственных векторов}
+\\4) A_{47} = \begin{pmatrix}
+5 & -2 \\
+-2 & 8
+\end{pmatrix} \\
+\chi_{\varphi}(\lambda) = 0 \\
+(5 - \lambda)(8 - \lambda) - 4= 0\\
+\lambda^2 - 13\lambda + 36 = 0\\
+\left[
+\begin{gathered}
+\lambda_1 = 9\\
+\lambda_2 = 4
+\end{gathered}
+\right. \\
+\lambda_1 = 9 : \begin{pmatrix}
+-4 & -2 \\
+-2 & - 1
+\end{pmatrix} \sim
+\begin{pmatrix}
+1 & \dfrac{1}{2}
+\end{pmatrix} \Longrightarrow e_1 = \begin{pmatrix}
+1 \\ -2
+\end{pmatrix} \\
+\lambda_2 = 4 : \begin{pmatrix}
+1 & -2 \\
+-2 & - 4
+\end{pmatrix} \sim
+\begin{pmatrix}
+1 & -2
+\end{pmatrix} \Longrightarrow e_2 = \begin{pmatrix}
+2 \\ 1
+\end{pmatrix} \\
+\text{очевидно, что } e_1 \perp e_2 \\
+\text{отнормируем найденный базис: }\\
+h_1 = \dfrac{1}{|e_1|}e_1 = \dfrac{1}{\sqrt{1 + 4}}\begin{pmatrix}
+1 \\ -2
+\end{pmatrix} = \dfrac{1}{\sqrt{5}}\begin{pmatrix}
+1 \\ -2
+\end{pmatrix}\\
+h_2 = \dfrac{1}{|e_2|}e_2 = \dfrac{1}{\sqrt{4 + 1}}\begin{pmatrix}
+2 \\ 1
+\end{pmatrix} = \dfrac{1}{\sqrt{5}}\begin{pmatrix}
+2 \\ 1
+\end{pmatrix}\\
+S = \dfrac{1}{\sqrt{5}}\begin{pmatrix}
+1 & 2 \\
+-2 & 1
+\end{pmatrix}\\
+A^{'} = \begin{pmatrix}
+9 & 0 \\
+0 & 4
+\end{pmatrix} \text{ в базисе }(h_1, h_2)\\
+8) A_{280} = \begin{pmatrix}
+0 & 2 & 1 \\
+2 & 8 & 2\\
+1 & 2 & 0
+\end{pmatrix} \\
+\chi_{\varphi}(\lambda) = 0 \Longleftrightarrow \\
+-\lambda(-\lambda(8 - \lambda) - 4) - 2(-2\lambda - 2) + (4 - (8 - \lambda)) = 0\\
+-\lambda^3 + 8\lambda^2 + 4\lambda + 4\lambda + 4 +4 -8 + \lambda = 0\\
+\lambda^3 - 8\lambda^2 - 9\lambda = 0\\
+\lambda(\lambda + 1)(\lambda - 9) = 0\\
+\left[
+\begin{gathered}
+\lambda_1 =  0\\
+\lambda_2 = -1\\
+\lambda_3 =  9
+\end{gathered}
+\right. \\
+1) \lambda_1 = 0 \\
+\begin{pmatrix}
+0 & 2 & 1 \\
+2 & 8 & 2\\
+1 & 2 & 0
+\end{pmatrix} \sim
+\begin{pmatrix}
+1 & 2 & 0 \\
+0 & 2 & 1 \\
+0 & 4 & 2
+\end{pmatrix} \sim
+\begin{pmatrix}
+1 & 2 & 0 \\
+0 & 2 & 1
+\end{pmatrix} \sim
+\begin{pmatrix}
+1 & 0 & -1 \\
+0 & 1 & \dfrac{1}{2}
+\end{pmatrix} \Longrightarrow e_1 = \begin{pmatrix}
+2 \\ -1 \\ 2
+\end{pmatrix}\\
+2) \lambda_2 = -1 \\
+\begin{pmatrix}
+1 & 2 & 1 \\
+2 & 9 & 2\\
+1 & 2 & 1
+\end{pmatrix} \sim
+\begin{pmatrix}
+1 & 2 & 1 \\
+0 & 5 & 0 
+\end{pmatrix} \sim
+\begin{pmatrix}
+1 & 0 & 1 \\
+0 & 1 & 0
+\end{pmatrix} \Longrightarrow e_2 = \begin{pmatrix}
+-1 \\ 0 \\ 1
+\end{pmatrix}\\
+3) \lambda_3 = 9\\
+\begin{pmatrix}
+-9 & 2 & 1 \\
+2 & -1 & 2\\
+1 & 2 & -9
+\end{pmatrix} \sim
+\begin{pmatrix}
+1 & 2 & -9 \\
+0 & -5 & 20\\
+0 & 20 & -80 
+\end{pmatrix} \sim
+\begin{pmatrix}
+1 & 2 & -9 \\
+0 & 1 & -4
+\end{pmatrix} \sim 
+\begin{pmatrix}
+1 & 0 & -1 \\
+0 & 1 & -4
+\end{pmatrix}
+\Longrightarrow e_3 = \begin{pmatrix}
+1 \\ 4 \\ 1
+\end{pmatrix}\\
+\text{У с/с преобразований собственные подпространства взаимно ортоганальны }\\
+\text{поэтому остается только отнормировать вектора: } \\
+h_1 = \dfrac{1}{|e_1|}e_1 = \dfrac{1}{\sqrt{4 + 1+  4}}\begin{pmatrix}
+2 \\ -1 \\ 2
+\end{pmatrix} = \dfrac{1}{3}\begin{pmatrix}
+2 \\ -1 \\ 2
+\end{pmatrix}\\
+h_2 = \dfrac{1}{|e_2|}e_2 = \dfrac{1}{\sqrt{1 + 1}}\begin{pmatrix}
+-1 \\ 0 \\ 1
+\end{pmatrix} = \dfrac{1}{\sqrt{2}}\begin{pmatrix}
+-1 \\ 0 \\ 1
+\end{pmatrix}\\
+h_3 = \dfrac{1}{|e_3|}e_3 = \dfrac{1}{\sqrt{1 + 16 + 1}}\begin{pmatrix}
+1 \\ 4 \\ 1
+\end{pmatrix} = \dfrac{1}{3\sqrt{2}}\begin{pmatrix}
+1 \\ 4 \\ 1
+\end{pmatrix}\\
+S = \dfrac{1}{3\sqrt{2}}\begin{pmatrix}
+2\sqrt{2}  & -3 & 1\\
+-1\sqrt{2} & 0  & 4\\
+2\sqrt{2}  & 3  & 1
+\end{pmatrix}\\
+A^{'} = \begin{pmatrix}
+0 & 0  & 0\\
+0 & -1 & 0 \\
+0 & 0  & 9
+\end{pmatrix} \text{ в базисе }(h_1, h_2, h_3)\\
+$
+$$29.47(2,3)$$
+$
+\varphi \text{ переводит столбцы м. А в столбцы м. B}\\
+\varphi - ортоганальное? \\
+2)A = A_{44}, B = A_{34}\\
+A = \begin{pmatrix}
+5  &  -1\\
+4  &   1
+\end{pmatrix}, \, B = \begin{pmatrix}
+2  &   1\\
+1  &   1
+\end{pmatrix}\\
+x \begin{pmatrix}
+5 \\ 4
+\end{pmatrix} \longrightarrow \varphi(x) \begin{pmatrix}
+2 \\ 1
+\end{pmatrix}\\
+y \begin{pmatrix}
+-1 \\ 1
+\end{pmatrix} \longrightarrow \varphi(y) \begin{pmatrix}
+1 \\ 1
+\end{pmatrix} \\
+(x, y) = -1; \quad (\varphi(x), \varphi(y)) = 3 \Longrightarrow \varphi - 
+\text{ не ортоганальное преобразование}\\
+3) A = \begin{pmatrix}
+1  &  1 & 3\\
+0  &  -1 & -6\\
+-1 & 1 & 0
+\end{pmatrix}, \, B = \begin{pmatrix}
+0  &  1 & 0\\
+1  &  -1 & -3\\
+-1 & -1 & -6
+\end{pmatrix}\\
+\left.
+\begin{gathered} 
+x \begin{pmatrix}
+1 \\ 0 \\ -1
+\end{pmatrix} \longrightarrow \varphi(x) \begin{pmatrix}
+0 \\ 1 \\ -1
+\end{pmatrix}\\
+y \begin{pmatrix}
+1 \\ -1 \\ 1
+\end{pmatrix} \longrightarrow \varphi(y) \begin{pmatrix}
+1 \\ -1 \\ -1
+\end{pmatrix} \\
+z \begin{pmatrix}
+3 \\ -6 \\ 0
+\end{pmatrix} \longrightarrow \varphi(y) \begin{pmatrix}
+0 \\ -3 \\ -6
+\end{pmatrix} \\
+\end{gathered}
+\qquad \begin{gathered} 
+(x, y) = 0\\
+(\varphi(x), \varphi(y)) = 0\\
+\\
+(y, z) = 9\\
+(\varphi(y), \varphi(z)) = 9\\
+\\
+(x, z) = 3\\
+(\varphi(x), \varphi(z)) = 3\\
+\end{gathered}
+\qquad
+\begin{gathered} 
+(x, x) = 2\\
+(\varphi(x), \varphi(x)) = 2\\
+\\
+(y, y) = 3\\
+(\varphi(y), \varphi(y)) = 3\\
+\\
+(z, z) = 45\\
+(\varphi(z), \varphi(z)) = 45\\
+\end{gathered}\\
+\right| 
+\Longrightarrow\\ \varphi - \text{ортоганальное преобразование}
+$
+\subsection{Билинейные и квадратичные функции в евклидовых пространствах}
+$$32.27(3,19)$$
+$3) 7x_1^2 + 4\sqrt{3}x_1x_2 + 3x_2^2 = 7(x_1^2 + 2\dfrac{2\sqrt{3}}{7} x_1x_2 + \dfrac{12}{49}x_2^2) + \dfrac{9}{7}x_2^2 = \\ =7(x_1 + \dfrac{2\sqrt{3}}{7}x_2)^2 + \dfrac{9}{7}x_2^2 = 7{x_1^{'}}^2 + 9{x_2^{'}}^2 \\
+A^{'} = \begin{pmatrix}
+7 & 0 \\
+0 & 9
+\end{pmatrix}, S = \begin{pmatrix}
+\sqrt{7}			 & 0 \\
+\dfrac{2\sqrt{3}}{7} & \dfrac{1}{\sqrt{7}}
+\end{pmatrix} \\
+19) 2x_1^2 - 4x_1x_2 + 4x_1x_3 + 6x_2^2 - 6x_2x_3 + 2x_2x_4 + 6x_3^2 + 2x_3x_4 + 4x_4^2\\
+\text{Будем выполнять элем. преобразования строк-стоблцов} \\
+\text{для приведения к диагональному виду}\\
+\begin{pmatrix}
+2 & -2 & 2  & 0 \\
+-2 & 6 & -3 & 1\\
+2 & -3 &  6 & 1\\
+0 &  1 &  1 & 4 
+\end{pmatrix} \sim
+\begin{pmatrix}
+2 & 0 & 2  & 0 \\
+0 & 4 & -1 & 1\\
+2 & -1 &  6 & 1\\
+0 &  1 &  1 & 4 
+\end{pmatrix} \sim
+\begin{pmatrix}
+2 & 0 & 0  & 0 \\
+0 & 4 & -1 & 1\\
+0 & -1 & 4 & 1\\
+0 &  1 & 1 & 4 
+\end{pmatrix} \sim
+\begin{pmatrix}
+2 & 0 & 0  & 0 \\
+0 & 4 & 0 & 1\\
+0 & 0 & \dfrac{15}{4} & \dfrac{5}{4}\\[0.25cm]
+0 &  1 & \dfrac{5}{4} & 4 
+\end{pmatrix} \sim
+\begin{pmatrix}
+2 & 0 & 0  			  & 0 \\
+0 & 4 & 0 			  & 0 \\
+0 & 0 & \dfrac{15}{4} & \dfrac{5}{4}\\[0.25cm]
+0 & 0 & \dfrac{5}{4}  & \dfrac{15}{4} 
+\end{pmatrix} \sim
+\begin{pmatrix}
+2 & 0 & 0  			  & 0 \\
+0 & 4 & 0 			  & 0 \\
+0 & 0 & \dfrac{15}{4} & 0 \\
+0 & 0 & 0  			  & \dfrac{10}{3} 
+\end{pmatrix}\\
+$
+Для нахождения базиса выполним те же преобразования стобцов над единичной матрицей \\
+$S = E S_1 \dots S_k : \begin{pmatrix}
+1 & 0 & 0  & 0 \\
+0 & 1 & 0 & 0\\
+0 & 0 &  1 & 0\\
+0 &  0 & 0 & 1 
+\end{pmatrix} \sim 
+\begin{pmatrix}
+1 & 1 & 0  & 0 \\
+0 & 1 & 0 & 0\\
+0 & 0 &  1 & 0\\
+0 &  0 & 0 & 1 
+\end{pmatrix} \sim
+\begin{pmatrix}
+1 & 1 & -1  & 0 \\
+0 & 1 & 0 & 0\\
+0 & 0 &  1 & 0\\
+0 &  0 & 0 & 1 
+\end{pmatrix} \sim
+\begin{pmatrix}
+1 & 1  & -\dfrac{3}{4}   & 0 \\[0.25cm]
+0 & 1  &  \dfrac{1}{4}   & 0\\[0.25cm]	
+0 & 0  &  1  			 & 0\\
+0 & 0  & 0  			 & 1 
+\end{pmatrix} \sim
+\begin{pmatrix}
+1 & 1  & -\dfrac{3}{4}   & - \dfrac{1}{4} \\[0.25cm]
+0 & 1  &  \dfrac{1}{4}   &  \dfrac{1}{4}\\[0.25cm]
+0 & 0  &  1  			 & 0\\
+0 & 0  & 0  			 & 1 
+\end{pmatrix} \sim
+\begin{pmatrix}
+1 & 1  & -\dfrac{3}{4}   & 0 \\[0.25cm]
+0 & 1  &  \dfrac{1}{4}   &  \dfrac{1}{6}\\[0.25cm]
+0 & 0  &  1  			 & - \dfrac{1}{3}\\[0.25cm]
+0 & 0  & 0  			 & 1 
+\end{pmatrix} = S
+$
+$$32.33(4)$$
+$
+G = A_{207} \\
+b : 2x_1^2 + 4x_1x_2 - 2x_1x_3 - x_2^2 + 4x_2x_3 + 2 x_3^2\\
+\text{Найти матрицу присоединенного преобразования.} \\
+\rhd
+A - \text{ матрица присоединенного преобразования к билиннейной функции b} \\
+Тогда, \, b(x, y) = (x, A(y)) \Longrightarrow B = GA \Longrightarrow A = G^{-1}B \\
+\\B = \begin{pmatrix}
+2 & 2 & -1 \\
+2 & -1 & 2 \\
+-1 & 2 & 2 
+\end{pmatrix}, \,G = \begin{pmatrix}
+1 & 2 & 0 \\
+2 & 2 & -2 \\
+0 & -2 & 5 
+\end{pmatrix}\\ 
+\text{Заметим хитрость: элементарное преобразование строк равносильно }\\
+\text{домножению слева на соответствующую элементраную матрицу.}\\ 
+\text{Тогда: } (G | B) \underset{элем. преобр.}\rightsquigarrow (E | G^{-1} B) \\
+\left( \begin{array}{ccc|ccc}
+1 & 2 & 0 & 2 & 2 & -1 \\
+2 & 5 & -2 & 2 & -1 & 2 \\
+0 & -2 & 5 & -1 & 2 & 2
+\end{array} \right) \sim
+\left( \begin{array}{ccc|ccc}
+1 & 2 & 0 & 2 & 2 & -1 \\
+0 & 1 & -2 & -2 & -5 & 4\\
+0 & 1 & -\dfrac{5}{2} & \dfrac{1}{2} & -1 & -1 
+\end{array} \right) \sim\\ \sim
+\left( \begin{array}{ccc|ccc}
+1 & 2 & 0 & 2 & 2 & -1 \\
+0 & 1 & -2 & -2 & -5 & 4\\
+0 & 0 & -\dfrac{1}{2} & \dfrac{5}{2} & 4 & -5 
+\end{array} \right) \sim
+\left( \begin{array}{ccc|ccc}
+1 & 2 & 0 & 2 & 2 & -1 \\
+0 & 1 & 0 & -12 & -21 & 24\\
+0 & 0 & 1 & -5 & -8 & 10 
+\end{array} \right) \sim \\ \sim
+\left( \begin{array}{ccc|ccc}
+1 & 0 & 0 & 26 & 44 & -49 \\
+0 & 1 & 0 & -12 & -21 & 24\\
+0 & 0 & 1 & -5 & -8 & 10 
+\end{array} \right) \\
+Ответ: \, A = \begin{pmatrix}
+26 & 44 & -49 \\
+-12 & -21 & 24\\
+-5 & -8 & 10 
+\end{pmatrix}
+$ \begin{flushright}
+	$\Box$
+\end{flushright}
+$$32.36(5,8)$$
+$5) \; f = x_1^2 - 2x_1x_2 + x_2^2 \\
+g = 17 x_1^2 + 8x_1x_2 +x_2^2 \\
+f: \begin{pmatrix}
+1 & -1 \\
+-1 & 1
+\end{pmatrix}, g : \begin{pmatrix}
+17 & 4 \\
+4 & 1
+\end{pmatrix}\\
+Миноры \; g: 17; 1 \Longrightarrow g - положительно \; определена\\
+Примем \; g \; за \; м.Грамма \;- G\\
+det(F - \lambda G) = 0 \; - \text{  обобщенное характеристическое уравнение}\\
+det \begin{pmatrix}
+1 - 17\lambda & -1 - 4\lambda \\
+- 1 - 4\lambda & 1 - \lambda
+\end{pmatrix} = 1 - 17\lambda - \lambda + 17\lambda^2 - 1 - 16\lambda^2 - 8\lambda = \lambda(\lambda - 26) \\
+\left[
+\begin{gathered}
+\lambda_1 =  0\\
+\lambda_2 = 26
+\end{gathered}
+\right. \\
+1)\lambda_1 = 0: \begin{pmatrix}
+1 & -1 \\
+-1 & 1
+\end{pmatrix} \sim
+\begin{pmatrix}
+1 & -1 
+\end{pmatrix} \Longrightarrow a_1 = \begin{pmatrix}
+1 \\ 1
+\end{pmatrix}\\
+2)\lambda_2 = 26: \begin{pmatrix}
+1 - 17 \cdot 26 & -1 - 4 \cdot 26 \\
+-1 - 4 \cdot 26 & 1 - 26
+\end{pmatrix} \sim
+\begin{pmatrix}
+-105 & -25
+\end{pmatrix} \Longrightarrow a_2 = \begin{pmatrix}
+-5 \\ 21
+\end{pmatrix}\\
+(a_1, a_1) = \begin{pmatrix}
+1 & 1
+\end{pmatrix} \begin{pmatrix}
+17 & 4 \\
+4 & 1 \\
+\end{pmatrix} \begin{pmatrix}
+1 \\ 1
+\end{pmatrix} = \begin{pmatrix}
+21 & 5
+\end{pmatrix} \begin {pmatrix}
+1 \\ 1
+\end{pmatrix} = 26\\
+(a_2, a_2) = \begin{pmatrix}
+-5 & 21
+\end{pmatrix} \begin{pmatrix}
+17 & 4 \\
+4 & 1 \\
+\end{pmatrix} \begin{pmatrix}
+-5 \\ 21
+\end{pmatrix} = \begin{pmatrix}
+-1 & -1
+\end{pmatrix} \begin {pmatrix}
+-5 \\ 21
+\end{pmatrix} = 26\\ 
+a_1^{'} = \dfrac{a_1}{|a_1|} = \dfrac{1}{\sqrt{26}}\begin{pmatrix}
+1 \\ 1
+\end{pmatrix} \\
+a_2^{'} = \dfrac{a_2}{|a_2|} = \dfrac{1}{\sqrt{26}}\begin{pmatrix}
+-5 \\ 21
+\end{pmatrix}\\
+\\ \text{В этом базисе:}\\
+F^* \longleftrightarrow \begin{pmatrix}
+0 & 0 \\
+0 & 26
+\end{pmatrix} \\
+G^* \longleftrightarrow \begin{pmatrix}
+1 & 0 \\
+0 & 1
+\end{pmatrix} \\
+S = \dfrac{1}{\sqrt{26}}\begin{pmatrix}
+1 & -5 \\
+1 & 21
+\end{pmatrix} \\
+8) \; f = (1 + 2m\sqrt{a^2 + a})x_1^2 + 2\sqrt{a^2 + a}x_1x_2\\
+g = (1+ m^2)x_1^2 + 2mx_1x_2 + x_2^2, \; m, a \in \mathbb{R}; \; a^2 + a \geqslant 0 \\
+\\f: \begin{pmatrix}
+1 + 2m\sqrt{a^2 + a} & \sqrt{a^2 + a} \\
+\sqrt{a^2 + a} &  0
+\end{pmatrix}, g : \begin{pmatrix}
+1 + m^2 & m \\
+m & 1
+\end{pmatrix}\\
+Миноры \; g: 1 + m^2; 1 \Longrightarrow g - положительно \; определена\\
+Примем \; g \; за \; м.Грамма \;- G\\\\
+det(F - \lambda G) = 0 \; - \text{  обобщенное характеристическое уравнение}\\
+det \begin{pmatrix}
+1 + 2m\sqrt{a^2+a} -\lambda -\lambda m^2 & \sqrt{a^2 + a} -\lambda m\\
+\sqrt{a^2 + a} - \lambda m & - \lambda
+\end{pmatrix} =-\lambda - 2m \lambda \sqrt{a^2 + a} + \lambda^2(1+m^2) - (a^2 + a + \lambda^2 m^2 - 2\lambda m \sqrt{a^2 +a }) =  \lambda^2 -\lambda - a^2 - a = \\ = (\lambda - a)(\lambda + a) - (\lambda + a) = (\lambda + a)(\lambda - a - 1)\\
+\left[
+\begin{gathered}
+\lambda_1 =  -a\\
+\lambda_2 = a + 1
+\end{gathered}
+\right. \\ 
+1)\lambda_1 = -a: \begin{pmatrix}
+1 + 2m\sqrt{a^2+a} +a(1 + m^2) & \sqrt{a^2 + a}  +a m\\
+\sqrt{a^2 + a} +a m & a
+\end{pmatrix} \sim \begin{pmatrix}
+\sqrt{a^2 + a} +a m & a
+\end{pmatrix} \Longrightarrow a_1 = \begin{pmatrix}
+-a \\ \sqrt{a^2 + a} +a m
+\end{pmatrix} \\
+2) \lambda_2 = a + 1: \begin{pmatrix}
+1 + 2m\sqrt{a^2+a} -(a+1)(1 + m^2) & \sqrt{a^2 + a} - (a+1) m\\
+\sqrt{a^2 + a} - (a+1) m & - (a+1)
+\end{pmatrix} \sim
+\begin{pmatrix}
+\sqrt{a^2 + a} - m(a+1) & - (a+1)
+\end{pmatrix} \Longrightarrow a_2 = \begin{pmatrix}
+a+1 \\ \sqrt{a^2 + a} - m(a+1)
+\end{pmatrix} \\
+(a_1, a_1) = \begin{pmatrix}
+-a & \sqrt{a^2 + a} +a m
+\end{pmatrix} \begin{pmatrix}
+1 + m^2 & m \\
+m & 1
+\end{pmatrix} \begin{pmatrix}
+-a \\ \sqrt{a^2 + a} +a m
+\end{pmatrix} = \\ = \begin{pmatrix}
+-a + m\sqrt{a^2 + a} & \sqrt{a^2 + a}
+\end{pmatrix} \begin{pmatrix}
+-a \\ \sqrt{a^2 + a} +a m
+\end{pmatrix} = a(2a + 1)\\
+\\(a_2, a_2) = \begin{pmatrix}
+a+1 & \sqrt{a^2 + a} - m(a+1)
+\end{pmatrix} \begin{pmatrix}
+1 + m^2 & m \\
+m & 1
+\end{pmatrix} \begin{pmatrix}
+a+1 \\ \sqrt{a^2 + a} - m(a+1)
+\end{pmatrix} = \\ = \begin{pmatrix}
+a+1 + m\sqrt{a^2 + a} & \sqrt{a^2 + a}
+\end{pmatrix} \begin{pmatrix}
+a+1 \\ \sqrt{a^2 + a} - m(a+1)
+\end{pmatrix} = 2a^2 + 3a + 1 = (a+1)(2a+1)\\
+a_1^{'} = \dfrac{a_1}{|a_1|} = \dfrac{1}{\sqrt{a(2a+1)}}\begin{pmatrix}
+-a \\ \sqrt{a^2 + a} +a m
+\end{pmatrix} \\
+a_2^{'} = \dfrac{a_2}{|a_2|} = \dfrac{1}{\sqrt{(a+1)(2a+1)}}\begin{pmatrix}
+a+1 \\ \sqrt{a^2 + a} - m(a+1)
+\end{pmatrix} \\
+\\ \text{В этом базисе:}\\
+F^* \longleftrightarrow \begin{pmatrix}
+-a & 0 \\
+0 & a+1
+\end{pmatrix} \\
+G^* \longleftrightarrow \begin{pmatrix}
+1 & 0 \\
+0 & 1
+\end{pmatrix} \\
+S = \dfrac{1}{\sqrt{2a+1}}\begin{pmatrix}
+-\sqrt{a} & \sqrt{a+1} \\
+\sqrt{a+1} + m\sqrt{a} & \sqrt{a} - m\sqrt{a+1}
+\end{pmatrix} \\
+$\\\\\\
+$$32.39(2)$$
+$f = 89x_1^2 - 42x_1x_2 + 5x_2^2 \longleftrightarrow \begin{pmatrix}
+89 & -21\\
+-21 & 5
+\end{pmatrix} \\
+g = 41x_1^2 - 18x_1x_2 + 2x_2^2 \longleftrightarrow \begin{pmatrix}
+41 & -9\\
+-9 & 2
+\end{pmatrix} \\
+Миноры \; g: 41; 1 \Longrightarrow g - положительно \; определена\\
+Примем \; g \; за \; м.Грамма \;- G\\
+det(F - \lambda G) = 0 \; - \text{  обобщенное характеристическое уравнение}\\
+det \begin{pmatrix}
+89 - 41\lambda & -21 + 9\lambda\\
+-21 + 9\lambda & 5 - 2\lambda
+\end{pmatrix} = 0 \Longleftrightarrow \\
+(89-41\lambda)(5 - 2\lambda) - (9\lambda - 21)^2 = 0 \\
+\lambda^2 - 5\lambda + 4 = 0 \\
+\left[
+\begin{gathered}
+\lambda_1 =  1\\
+\lambda_2 = 4
+\end{gathered}
+\right. \\ 
+F^* \longleftrightarrow \begin{pmatrix}
+1 & 0 \\
+0 & 4
+\end{pmatrix} \\
+G^* \longleftrightarrow \begin{pmatrix}
+1 & 0 \\
+0 & 1
+\end{pmatrix} \\
+$
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
